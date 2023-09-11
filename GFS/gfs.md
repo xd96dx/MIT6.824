@@ -68,3 +68,23 @@
 ```
 	当删除文件时, 不直接删除物理文件, 而通过日志记录, 并且重命名来隐藏文件, 当 master 扫描文件系统时, 再删除这些隐藏超过三天的文件, 此时内存中相应的元数据也会被删除, 孤立的chunk 也会在chunkServer 的扫描中被删除
 ```
+
+- Stale Replica Detection
+
+```
+	副本过期检测, 当master 获取一个chunk 的replicas 时, 会更新chunk 的版本号,如果某个副本在此时没有被更新版本号成功, 则被视为过期, 会在master 的定期垃圾回收中删除旧副本
+```
+
+## FAULT TOLERANCE AND DIAGNOSIS
+
+- High Availability
+
+```
+	快速恢复, chunk 副本, master的replica
+```
+
+- Data Integrity
+
+```
+	每个chunk 都有一个32位校验和, 来保证数据的完整, 当数据与校验和不匹配时, chunkServer 将返回master 错误, master 这时会向别的chunkServer请求数据, 当新的请求成功后, 会删除错误的副本
+```
